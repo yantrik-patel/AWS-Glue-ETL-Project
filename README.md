@@ -151,20 +151,45 @@ Now again test the connection and error should go away.
 <details>
 <summary>Creating a crawler</summary>
 We need to create one more crawler named 'crawl-redshift-table' which will crawl through table and prepare schema.
-The steps are same as 1st crawler creating except the data source will be JDBC.   
-
-connection should be the one we created in previous step
-
+The steps are same as 1st crawler creating except the data source will be JDBC. And connection should be the one we created in previous step
 
 
 
 ![image](https://github.com/yantrik-patel/AWS-Glue-ETL-Project/assets/116425101/0113a1a9-64eb-46e4-b138-49250a515b9d)
 
-
-
-
-
 </details>
+
+<details>
+<summary>Creating the 2nd Glue Job</summary>
+Like the 1st glue job, we need to select 'visual etl'   
+Following sould be the source, transformation and target configurations
+    
+- **source:** S3 Bucket's output folder where parquet files are stored    
+- **transformation:** simply select the 'change schema'(I have done column renaming based on Redshift table column names in scripts itself)
+- **target:** redshift table that we created.
+
+once this are configured, give the job name and other basic details and move on to scripts tab and click on 'edit script'.   
+in the script, column names are mapped with the target(Redshift) table column names. The script code can be found in this repo file name is 'glue_job_insert_into_redshift.py'   
+
+We can now run the job and at the end Redshift table will be populated.   
+
+![image](https://github.com/yantrik-patel/AWS-Glue-ETL-Project/assets/116425101/9fb9135d-637d-4dca-92d0-415f9f9d10ae)
+
+</details>    
+</details>
+<details>
+<summary>Orchestration</summary>
+    I have used Glue Workflow to orchastrate the whole process. Following is the flow   
+
+        
+- 1st trigger is on demand, which starts running 1st Glue crawler.
+- After 1st Glue crawler runs successfully, 1st Glue Job starts running.
+- After successfull run of 1st Glue Job, 2nd crawler is triggered.
+- After 2nd crawler run is success, 2nd Glue job starts running.
+
+
+![image](https://github.com/yantrik-patel/AWS-Glue-ETL-Project/assets/116425101/31861410-ded8-46f0-9919-844073fe6cec)
+
     
 </details>
 

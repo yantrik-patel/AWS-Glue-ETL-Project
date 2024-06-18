@@ -1,10 +1,11 @@
 # AWS-Glue-ETL-Project
-This repo is for demonstration of ETL pipeline that runs on AWS Glue.
+This repo is for demonstration of ETL pipeline that runs on AWS Glue. It is "EVENT BASED" data pipeline which gets triggered as soon as new file is uploaded into S3 bucket.
 
 
 Following is the Flowchart of whole pipeline that I have built
 
-![image](https://github.com/yantrik-patel/AWS-Glue-ETL-Project/assets/116425101/18a890dc-f523-4db1-99d7-ba9f94f13d97)
+![image](https://github.com/yantrik-patel/AWS-Glue-ETL-Project/assets/116425101/893c3fce-0d57-4010-a12c-39fe7cd81d18)
+
 
 <details>
 
@@ -179,16 +180,36 @@ We can now run the job and at the end Redshift table will be populated.
 </details>
 <details>
 <summary>Orchestration</summary>
-    I have used Glue Workflow to orchastrate the whole process. Following is the flow   
+    I have used Lambda Function and Glue Workflow to orchestrate the whole process. Following is the flow   
 
-        
-- 1st trigger is on demand, which starts running 1st Glue crawler.
-- After 1st Glue crawler runs successfully, 1st Glue Job starts running.
-- After successfull run of 1st Glue Job, 2nd crawler is triggered.
-- After 2nd crawler run is success, 2nd Glue job starts running.
+- As soon as the new file is uploaded in to S3 bucket, Glue workflow is invoked with the help of Lambda Function
+  <details>
+      <summary>Creating Lambda Function</summary>
+      Following are the steps to set up the Lambda Function   
 
+    - Search 'Lambda' in the navigation bar.
+    - Click 'create function'
+    - provide function name
+    - Choose Runtime: Python 3.9
+    - add trigger: S3 and choose PUT as event
+    - in code tab: need to write the python code. file can be found in this repo. file name Lambda_trigger.py
 
-![image](https://github.com/yantrik-patel/AWS-Glue-ETL-Project/assets/116425101/31861410-ded8-46f0-9919-844073fe6cec)
+  ![image](https://github.com/yantrik-patel/AWS-Glue-ETL-Project/assets/116425101/ae36ab53-7fd8-4c93-8090-a93aa6f35e9a)
+
+   
+  </details>
+  <details>
+      <summary>Glue Workflow</summary>
+      In Glue workflow, following steps are getting executed   
+        - At start, 1st Glue crawler is triggered.
+        - After 1st Glue crawler runs successfully, 1st Glue Job starts running.
+        - After successfull run of 1st Glue Job, 2nd crawler is triggered.
+        - After 2nd crawler run is success, 2nd Glue job starts running.
+
+   ![image](https://github.com/yantrik-patel/AWS-Glue-ETL-Project/assets/116425101/31861410-ded8-46f0-9919-844073fe6cec)
+  </details>
+
+ 
 
     
 </details>
